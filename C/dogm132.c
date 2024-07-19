@@ -11,6 +11,9 @@
 #include "dogm132.h"
 
 
+extern const uint8_t calibri_16_16[];
+extern const uint8_t Calibri_13_15[];
+
 void lcd_display_state(uint8_t cmd)
 {
 	CS_low;
@@ -214,6 +217,29 @@ void lcd_configuration(void)
 	lcd_display_state(ON);
 }
 
+
+void lcd_write_char(char ch)
+{
+	uint16_t index;
+	uint16_t k;
+	uint8_t data;
+
+	lcd_page_address_set(0);
+	lcd_column_address_set(0);
+
+	index = 26 * (uint16_t)(ch - ' ');
+	for (k = 0; k < 13; k++){
+		data = Calibri_13_15[index + (2 * k)];
+		lcd_display_data_write(data);
+	}
+
+	lcd_page_address_set(1);
+	lcd_column_address_set(0);
+	for (k = 0; k < 13; k++){
+		data = Calibri_13_15[index + (2 * k + 1)];
+		lcd_display_data_write(data);
+	}
+}
 
 
 
