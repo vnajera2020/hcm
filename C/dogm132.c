@@ -9,10 +9,10 @@
  */
 
 #include "dogm132.h"
+#include "font.h"
 
-
-extern const uint8_t calibri_16_16[];
-extern const uint8_t Calibri_13_15[];
+#define ALPHA 1
+#define DIGIT 0
 
 void lcd_display_state(uint8_t cmd)
 {
@@ -202,6 +202,79 @@ void lcd_nop(void)
 }
 
 
+void lcd_write_char(char ch, uint8_t page, uint8_t column, struct FONT * font, uint8_t type)
+{
+	uint16_t index;
+	uint16_t ind;
+	uint16_t row;
+	uint16_t k;
+
+	uint8_t data;
+	uint16_t num_rows;
+	uint16_t num_columns;
+
+	char offset;
+
+	num_rows = font->high / 8;
+	num_columns = font->width;
+
+	offset = ((type == ALPHA) ? ' ' : '-');
+	index = (num_columns * num_rows) * (uint16_t)(ch - offset);
+
+	lcd_column_address_set(column);
+	for (row = 0; row < num_rows; row++){
+		lcd_page_address_set(page + row);
+		for (k = 0; k < num_columns; k++){
+			ind = index + (num_rows * k + row);
+			data = font->buf[ind];
+			lcd_display_data_write(data);
+		}
+		lcd_column_address_set(column);
+	}
+}
+
+
+void lcd_write_alphanumerics_string(char *str, uint8_t page, uint8_t column)
+{
+	uint8_t k;
+
+	k = 0;
+	while(str[k] != 0){
+		lcd_write_char(str[k], page, column, &font_alphanumeric, ALPHA);
+		column += font_alphanumeric.width;
+		k++;
+	}
+}
+
+
+void lcd_write_digits_string(char *str, uint8_t page, uint8_t column)
+{
+	uint8_t k;
+
+	k = 0;
+	while(str[k] != 0){
+		lcd_write_char(str[k], page, column, &font_digits, DIGIT);
+		column += font_digits.width;
+		k++;
+	}
+}
+
+
+void lcd_clean_display(void)
+{
+	uint8_t page;
+	uint8_t column;
+
+	for (page = 0; page < 4; page++){
+		lcd_page_address_set(page);
+		lcd_column_address_set(0);
+		for (column = 0; column < 132; column++){
+			lcd_display_data_write(ZEROS);
+		}
+	}
+}
+
+
 void lcd_configuration(void)
 {
 	lcd_display_start_line_set(0);
@@ -215,34 +288,9 @@ void lcd_configuration(void)
 	lcd_electronic_volume(0x1F);
 	lcd_static_indicator_off();
 	lcd_display_state(ON);
+
+	lcd_clean_display();
 }
-
-
-void lcd_write_char(char ch)
-{
-	uint16_t index;
-	uint16_t k;
-	uint8_t data;
-
-	lcd_page_address_set(0);
-	lcd_column_address_set(0);
-
-	index = 26 * (uint16_t)(ch - ' ');
-	for (k = 0; k < 13; k++){
-		data = Calibri_13_15[index + (2 * k)];
-		lcd_display_data_write(data);
-	}
-
-	lcd_page_address_set(1);
-	lcd_column_address_set(0);
-	for (k = 0; k < 13; k++){
-		data = Calibri_13_15[index + (2 * k + 1)];
-		lcd_display_data_write(data);
-	}
-}
-
-
-
 
 
 
