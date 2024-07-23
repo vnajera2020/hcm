@@ -25,7 +25,7 @@ void timer_configuration(void)
 
 	param.clockSource = TIMER_A_CLOCKSOURCE_SMCLK;
 	param.clockSourceDivider = TIMER_A_CLOCKSOURCE_DIVIDER_40;
-	param.timerPeriod = PERIOD_1S - 1;
+	param.timerPeriod = PERIOD_500MS - 1;
 	param.timerInterruptEnable_TAIE = TIMER_A_TAIE_INTERRUPT_DISABLE;
 	param.captureCompareInterruptEnable_CCR0_CCIE = TIMER_A_CCIE_CCR0_INTERRUPT_ENABLE;
 	param.timerClear = TIMER_A_DO_CLEAR;

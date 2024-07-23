@@ -14,6 +14,15 @@
 #define ALPHA 1
 #define DIGIT 0
 
+void float_to_string(float value, char *str);
+void get_prefix_string(float value, char *str);
+void clean_string(char * str, uint16_t length);
+uint16_t string_length(char * str);
+
+
+/*
+ * cmd: 1) ON, 2) OFF.
+ */
 void lcd_display_state(uint8_t cmd)
 {
 	CS_low;
@@ -23,6 +32,9 @@ void lcd_display_state(uint8_t cmd)
 }
 
 
+/*
+ * line indica la dirección de la línea de inicio del LCD.
+ */
 void lcd_display_start_line_set(uint8_t line)
 {
 	uint8_t start_line;
@@ -35,6 +47,9 @@ void lcd_display_start_line_set(uint8_t line)
 }
 
 
+/*
+ * page indica la página a usar.
+ */
 void lcd_page_address_set(uint8_t page)
 {
 	uint8_t page_address;
@@ -47,6 +62,9 @@ void lcd_page_address_set(uint8_t page)
 }
 
 
+/*
+ * column indica la columna a usar.
+ */
 void lcd_column_address_set(uint8_t column)
 {
 	uint8_t msca;
@@ -63,6 +81,9 @@ void lcd_column_address_set(uint8_t column)
 }
 
 
+/*
+ * data representa el valor a escribir en la LCD.
+ */
 void lcd_display_data_write(uint8_t data)
 {
 	CS_low;
@@ -72,6 +93,9 @@ void lcd_display_data_write(uint8_t data)
 }
 
 
+/*
+ * cmd: 1) ADC_NORMAL, 2) ADC_REVERSE.
+ */
 void lcd_adc_select(uint8_t cmd)
 {
 	CS_low;
@@ -81,6 +105,9 @@ void lcd_adc_select(uint8_t cmd)
 }
 
 
+/*
+ * cmd: 1) NORMAL_MODE, 2) REVERSE_MODE.
+ */
 void lcd_display_mode(uint8_t cmd)
 {
 	CS_low;
@@ -90,6 +117,9 @@ void lcd_display_mode(uint8_t cmd)
 }
 
 
+/*
+ * cmd: 1) ALL_POINTS_ON, 2) ALL_POINTS_OFF
+ */
 void lcd_display_all_points(uint8_t cmd)
 {
 	CS_low;
@@ -99,6 +129,9 @@ void lcd_display_all_points(uint8_t cmd)
 }
 
 
+/*
+ * cmd: 1) RATIO_1_9_BIAS, 2) RATIO_1_7_BIAS.
+ */
 void lcd_bias_set(uint8_t cmd)
 {
 	CS_low;
@@ -108,6 +141,9 @@ void lcd_bias_set(uint8_t cmd)
 }
 
 
+/*
+ *
+ */
 void ldc_reset(void)
 {
 	CS_low;
@@ -117,6 +153,9 @@ void ldc_reset(void)
 }
 
 
+/*
+ * mode: 1) COMMON_NORMAL_MODE, 2) COMMON_REVERSE_MODE.
+ */
 void lcd_common_output_mode_select(uint8_t mode)
 {
 	CS_low;
@@ -126,6 +165,11 @@ void lcd_common_output_mode_select(uint8_t mode)
 }
 
 
+/*
+ * booster_mode:           1) BOOSTER_CIRCUIT_OFF,          2) BOOSTER_CIRCUIT_ON.
+ * voltage_regulator_mode: 1) VOLTAGE_REG_CIRCUIT_OFF,      2) VOLTAGE_REG_CIRCUIT_ON.
+ * voltage_follower_mode:  1) VOLTAGE_FOLLOWER_CIRCUIT_OFF, 2) VOLTAGE_FOLLOWER_CIRCUIT_ON.
+ */
 void lcd_power_control_set(uint8_t booster_mode, uint8_t voltage_regulator_mode, uint8_t voltage_follower_mode)
 {
 	uint8_t mode;
@@ -137,7 +181,9 @@ void lcd_power_control_set(uint8_t booster_mode, uint8_t voltage_regulator_mode,
 	CS_high;
 }
 
-
+/*
+ * ratio indica la relación para la resistencia interna.
+ */
 void lcd_v0_voltage_reg_internal_resistor_ratio_set(uint8_t ratio)
 {
 	uint8_t resistor_ratio;
@@ -150,6 +196,9 @@ void lcd_v0_voltage_reg_internal_resistor_ratio_set(uint8_t ratio)
 }
 
 
+/*
+ * volume es el valor a escribir en el registro Electronic Volume.
+ */
 void lcd_electronic_volume(uint8_t volume)
 {
 	uint8_t volume_value;
@@ -163,6 +212,9 @@ void lcd_electronic_volume(uint8_t volume)
 }
 
 
+/*
+ * cmd: 1) BLINKING_ONE_SECOND, 2) BLINKING_HALF_SECOND, 3) CONSTANT_ON
+ */
 void lcd_static_indicator_on(uint8_t cmd)
 {
 	CS_low;
@@ -183,6 +235,9 @@ void lcd_static_indicator_off(void)
 }
 
 
+/*
+ * ratio: 1) BOOSTER_2X_3X_4X, 2) BOOSTER_5X, 3)BOOSTER_6X.
+ */
 void lcd_booster_ratio_set(uint8_t ratio)
 {
 	CS_low;
@@ -202,6 +257,14 @@ void lcd_nop(void)
 }
 
 
+
+/*
+ * ch: caracter a escribie en el LCD.
+ * page: 0,1,2,3 son los valores permisibles.
+ * column: 0,1,...,131 solo valore permisibles.
+ * font: apuntador a la estructura que contiene la información de la fuente a utilizar.
+ * type: indica el tipo de cadena, alfanúmerica o digitos. Los valores de type son ALPHA o DIGIT
+ */
 void lcd_write_char(char ch, uint8_t page, uint8_t column, struct FONT * font, uint8_t type)
 {
 	uint16_t index;
@@ -233,7 +296,11 @@ void lcd_write_char(char ch, uint8_t page, uint8_t column, struct FONT * font, u
 	}
 }
 
-
+/*
+ * str: apuntador de la cadena a escribir en el LCD.
+ * page: 0,1,2,3 son los valores permisibles.
+ * column: 0,1,...,131 solo valore permisibles.
+ */
 void lcd_write_alphanumerics_string(char *str, uint8_t page, uint8_t column)
 {
 	uint8_t k;
@@ -247,6 +314,11 @@ void lcd_write_alphanumerics_string(char *str, uint8_t page, uint8_t column)
 }
 
 
+/*
+ * str: apuntador de la cadena a escribir en el LCD.
+ * page: 0,1,2,3 son los valores permisibles.
+ * column: 0,1,...,131 solo valore permisibles.
+ */
 void lcd_write_digits_string(char *str, uint8_t page, uint8_t column)
 {
 	uint8_t k;
@@ -293,6 +365,30 @@ void lcd_configuration(void)
 }
 
 
+
+void lcd_write_measure(float x)
+{
+	char digits[20]={0};
+	char prefix[20]={0};
+
+	uint8_t length;
+	uint8_t offset = 5;
+	uint8_t width_font = 14;
+	uint8_t start_col_digits;
+	uint8_t start_col_alpha = 95;
+
+	clean_string(digits, 20);
+	clean_string(prefix, 20);
+
+	float_to_string(x, digits);
+	get_prefix_string(x, prefix);
+	length = string_length(digits);
+	start_col_digits = start_col_alpha - (length * width_font) - offset;
+
+	lcd_clean_display();
+	lcd_write_digits_string(digits, 1, start_col_digits);
+	lcd_write_alphanumerics_string(prefix, 2, start_col_alpha);
+}
 
 
 
